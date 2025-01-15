@@ -80,16 +80,21 @@ app.post("/room", middleware, async (req,res)=>{
     }
     //@ts-ignore
     const userId = req.userId;
-
-    await prismaClient.room.create({
+    try{
+    const room = await prismaClient.room.create({
         data: {
             slug: parsedData.data.name,
             adminId: userId
         }
     })
     res.json({
-        roomId: 123
+        roomId: room.id
     })
+    }catch(e){
+        res.status(411).json({
+            message: "Room should be unique"
+        })
+    }
 })
 
 app.listen(3001);
